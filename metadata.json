@@ -1,0 +1,6 @@
+{
+  "name": "Roleta Promocional Prime Home Decor",
+  "description": "Página de Roleta Promocional Prime Home Decor com sorteio de cupons exclusivos.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
