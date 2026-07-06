@@ -158,6 +158,13 @@ export default function App() {
     if (formErrors.telefone) setFormErrors(prev => ({ ...prev, telefone: false }));
   };
 
+  const handleFormSubmit = (e?: React.FormEvent) => {
+    if (e) {
+      e.preventDefault();
+    }
+    handleSpinClick();
+  };
+
   /*
   ========================================================================
   6. ONDE ESTÁ A REGRA QUE IMPEDE PRODUTOS DE SEREM SORTEADOS
@@ -186,6 +193,26 @@ export default function App() {
     }
 
     if (isSpinning) return;
+
+    // Disparar evento para o Google Tag Manager (dataLayer)
+    try {
+      const dl = (window as any).dataLayer || [];
+      dl.push({
+        event: 'formSubmit',
+        formId: 'roulette-form',
+        leadName: nome.trim(),
+        leadEmail: email.trim(),
+        leadPhone: telefone.trim(),
+        gtm: {
+          element: document.getElementById('roulette-form'),
+          elementId: 'roulette-form',
+          elementClasses: 'bg-[#031323]/90 backdrop-blur-md border border-brand-gold/20 p-6 md:p-8 rounded-2xl shadow-[0_15px_35px_rgba(0,0,0,0.5)] space-y-5 transition-all'
+        }
+      });
+      (window as any).dataLayer = dl;
+    } catch (err) {
+      console.error('Erro ao enviar dados para o GTM:', err);
+    }
 
     // Sorteio justo e real APENAS entre os cupons elegíveis
     const selectedCoupon = validCoupons[Math.floor(Math.random() * validCoupons.length)];
@@ -410,7 +437,11 @@ export default function App() {
 
           {/* Card do Formulário */}
           {!spinCompleted && (
-            <div className="bg-[#031323]/90 backdrop-blur-md border border-brand-gold/20 p-6 md:p-8 rounded-2xl shadow-[0_15px_35px_rgba(0,0,0,0.5)] space-y-5 transition-all">
+            <form 
+              id="roulette-form"
+              onSubmit={handleFormSubmit}
+              className="bg-[#031323]/90 backdrop-blur-md border border-brand-gold/20 p-6 md:p-8 rounded-2xl shadow-[0_15px_35px_rgba(0,0,0,0.5)] space-y-5 transition-all"
+            >
               <h2 className="text-lg font-serif font-semibold text-brand-gold flex items-center gap-2">
                 <span className="w-1.5 h-6 bg-brand-caramel rounded-full" />
                 Cadastre-se para Liberar seu Giro
@@ -487,7 +518,7 @@ export default function App() {
                   🔒 Garantimos total privacidade e segurança dos seus dados pessoais.
                 </p>
               </div>
-            </div>
+            </form>
           )}
 
           {/* Sessão de Informação Decorativa */}
@@ -634,7 +665,8 @@ export default function App() {
 
               {/* Botão de Acionamento do Giro */}
               <button
-                onClick={handleSpinClick}
+                type="submit"
+                form="roulette-form"
                 disabled={isSpinning}
                 className={`mt-8 px-10 py-4 text-base tracking-wide font-bold uppercase rounded-full shadow-[0_10px_25px_rgba(149,94,32,0.3)] transition-all duration-300 transform active:scale-95 ${
                   isSpinning
