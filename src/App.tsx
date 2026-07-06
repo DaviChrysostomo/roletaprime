@@ -197,6 +197,11 @@ export default function App() {
     // Disparar evento para o Google Tag Manager (dataLayer)
     try {
       const now = new Date();
+      const day = String(now.getDate()).padStart(2, '0');
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const year = now.getFullYear();
+      const formattedDate = `${day}/${month}/${year}`;
+
       const dl = (window as any).dataLayer || [];
       dl.push({
         event: 'formSubmit',
@@ -204,9 +209,7 @@ export default function App() {
         leadName: nome.trim(),
         leadEmail: email.trim(),
         leadPhone: telefone.trim(),
-        submissionDate: now.toISOString(),
-        submissionTimestamp: now.getTime(),
-        submissionFormattedDate: now.toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' }),
+        submissionDate: formattedDate,
         gtm: {
           element: document.getElementById('roulette-form'),
           elementId: 'roulette-form',
