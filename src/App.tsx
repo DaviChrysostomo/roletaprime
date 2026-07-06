@@ -435,10 +435,10 @@ export default function App() {
               <Gift className="w-3.5 h-3.5" /> ✨ Oportunidade Exclusiva Prime Home Decor
             </span>
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-semibold tracking-tight leading-tight text-white drop-shadow-sm">
-              Gire e Ganhe seu <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-gold-light via-brand-gold to-brand-caramel font-bold italic">Cupom de Desconto</span> para Peças Clássicas de Luxo!
+              Gire e Ganhe seu <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-gold-light via-brand-gold to-brand-caramel font-bold italic">Cupom de Desconto</span> Válido para Todo o Site!
             </h1>
             <p className="text-sm md:text-base text-gray-300 leading-relaxed max-w-md mx-auto lg:mx-0">
-              Cadastre-se abaixo para girar a roleta premium e garantir seu cupom exclusivo de até 8% OFF imediatamente. O empurrãozinho perfeito para você renovar seu lar com as poltronas, cômodas e aparelhos de jantar clássicos da Prime Home Decor!
+              Cadastre-se abaixo para girar a roleta premium e garantir seu cupom exclusivo de até 8% OFF imediatamente. O empurrãozinho perfeito para você renovar seu lar com qualquer peça em toda a loja oficial Prime Home Decor!
             </p>
           </div>
 
@@ -532,7 +532,7 @@ export default function App() {
           {!spinCompleted && (
             <div className="hidden lg:flex items-center gap-3 p-4 rounded-xl bg-brand-navy border border-brand-gold/10 text-xs text-gray-400 leading-relaxed">
               <Info className="w-6 h-6 text-brand-gold shrink-0" />
-              <span>Garantia Prime: Todos os participantes cadastrados ganham cupons de desconto exclusivos de até 8% OFF para adquirir as peças clássicas de nosso catálogo!</span>
+              <span>Garantia Prime: Todos os participantes cadastrados ganham cupons de desconto exclusivos de até 8% OFF válidos para qualquer produto em toda a nossa loja virtual!</span>
             </div>
           )}
         </div>
@@ -710,7 +710,7 @@ export default function App() {
                     Parabéns!
                   </h2>
                   <p className="text-sm text-gray-300">
-                    Você ganhou um cupom de desconto exclusivo da Prime Home Decor.
+                    Você ganhou um cupom de desconto exclusivo, válido para todo o site da Prime Home Decor.
                   </p>
                 </div>
 
@@ -763,7 +763,7 @@ export default function App() {
                     Tudo Pronto!
                   </h2>
                   <p className="text-sm text-gray-300">
-                    O código <strong className="text-brand-gold-light font-mono text-base">{winningCoupon?.code}</strong> foi copiado para a sua área de transferência. Use-o na finalização da sua compra!
+                    O código <strong className="text-brand-gold-light font-mono text-base">{winningCoupon?.code}</strong> foi copiado para a sua área de transferência. Use-o na finalização de qualquer compra em todo o nosso site!
                   </p>
                 </div>
 
