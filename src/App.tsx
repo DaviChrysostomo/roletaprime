@@ -196,6 +196,7 @@ export default function App() {
 
     // Disparar evento para o Google Tag Manager (dataLayer)
     try {
+      const now = new Date();
       const dl = (window as any).dataLayer || [];
       dl.push({
         event: 'formSubmit',
@@ -203,6 +204,9 @@ export default function App() {
         leadName: nome.trim(),
         leadEmail: email.trim(),
         leadPhone: telefone.trim(),
+        submissionDate: now.toISOString(),
+        submissionTimestamp: now.getTime(),
+        submissionFormattedDate: now.toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' }),
         gtm: {
           element: document.getElementById('roulette-form'),
           elementId: 'roulette-form',
