@@ -31,87 +31,83 @@ interface RouletteItem {
 /*
 ========================================================================
 3. ONDE ESTÃO OS ITENS VISUAIS DA ROLETA (8 fatias exatas)
-   - Ordem estrita mantendo produtos intercalados com cupons para gerar expectativa.
+   - Todos os produtos foram removidos; agora a roleta contém apenas cupons reais de desconto.
 ========================================================================
 */
 const visualItems: RouletteItem[] = [
   {
     id: 0,
     type: 'coupon',
-    code: 'COPA6OFF',
-    discount: '6% OFF',
-    name: 'COPA6OFF | 6% OFF'
+    code: 'ROLETA08OFF',
+    discount: '8% OFF',
+    name: 'ROLETA08OFF | 8% OFF'
   },
-  /* 
-  ========================================================================
-  4. ONDE ESTÃO OS PRODUTOS APENAS VISUAIS
-     - Eles servem puramente como iscas decorativas de altíssimo valor.
-     - NUNCA podem ser sorteados, conforme regras críticas.
-  ========================================================================
-  */
   {
     id: 1,
-    type: 'product',
-    name: 'Poltronas Clássicas',
-    fullName: 'Par de Poltronas Clássicas Verde com Dourado',
-    image: 'https://i.imgur.com/tPuWMY4.png'
+    type: 'coupon',
+    code: 'ROLETA05OFF',
+    discount: '5% OFF',
+    name: 'ROLETA05OFF | 5% OFF'
   },
   {
     id: 2,
     type: 'coupon',
-    code: 'LUZESPECIAL',
-    discount: '5% OFF',
-    name: 'LUZESPECIAL | 5% OFF'
+    code: 'ROLETA07OFF',
+    discount: '7% OFF',
+    name: 'ROLETA07OFF | 7% OFF'
   },
   {
     id: 3,
-    type: 'product',
-    name: 'Cômoda Clássica',
-    fullName: 'Cômoda Clássica Marchetada 3 Gavetas com Tampo em Mármore',
-    image: 'https://i.imgur.com/6iW0qtI.png'
+    type: 'coupon',
+    code: 'ROLETA03OFF',
+    discount: '3% OFF',
+    name: 'ROLETA03OFF | 3% OFF'
   },
   {
     id: 4,
     type: 'coupon',
-    code: 'CLIENTEOURO',
-    discount: '8% OFF',
-    name: 'CLIENTEOURO | 8% OFF'
+    code: 'ROLETA06OFF',
+    discount: '6% OFF',
+    name: 'ROLETA06OFF | 6% OFF'
   },
   {
     id: 5,
-    type: 'product',
-    name: 'Jantar 62 Peças',
-    fullName: 'Jogo de Aparelho de Jantar em Porcelana Branca e Arabescos Filetados à Ouro 62 Peças',
-    image: 'https://i.imgur.com/Fe0zbH4.png'
+    type: 'coupon',
+    code: 'ROLETA02OFF',
+    discount: '2% OFF',
+    name: 'ROLETA02OFF | 2% OFF'
   },
   {
     id: 6,
     type: 'coupon',
-    code: 'CLIENTEVIP',
+    code: 'ROLETA05OFF',
     discount: '5% OFF',
-    name: 'CLIENTEVIP | 5% OFF'
+    name: 'ROLETA05OFF | 5% OFF'
   },
   {
     id: 7,
     type: 'coupon',
-    code: 'PRIME3OFF',
-    discount: '3% OFF',
-    name: 'PRIME3OFF | 3% OFF'
+    code: 'ROLETA04OFF',
+    discount: '4% OFF',
+    name: 'ROLETA04OFF | 4% OFF'
   }
 ];
 
 /*
 ========================================================================
 5. ONDE ESTÃO OS CUPONS REALMENTE SORTEÁVEIS
-   - Apenas esses cupons são elegíveis para sorteio. Os produtos estão fora.
+   - Todos os cupons da roleta são elegíveis para sorteio.
 ========================================================================
 */
 const validCoupons = [
-  { code: 'COPA6OFF', discount: '6%', visualIndex: 0 },
-  { code: 'LUZESPECIAL', discount: '5%', visualIndex: 2 },
-  { code: 'CLIENTEOURO', discount: '8%', visualIndex: 4 },
-  { code: 'CLIENTEVIP', discount: '5%', visualIndex: 6 },
-  { code: 'PRIME3OFF', discount: '3%', visualIndex: 7 }
+  { code: 'ROLETA08OFF', discount: '8%', visualIndex: 0 },
+  { code: 'ROLETA05OFF', discount: '5%', visualIndex: 1 },
+  { code: 'ROLETA07OFF', discount: '7%', visualIndex: 2 },
+  { code: 'ROLETA03OFF', discount: '3%', visualIndex: 3 },
+  { code: 'ROLETA06OFF', discount: '6%', visualIndex: 4 },
+  { code: 'ROLETA02OFF', discount: '2%', visualIndex: 5 },
+  { code: 'ROLETA05OFF', discount: '5%', visualIndex: 6 },
+  { code: 'ROLETA04OFF', discount: '4%', visualIndex: 7 }
 ];
 
 export default function App() {
@@ -130,6 +126,7 @@ export default function App() {
 
   // Estados pós-sorteio
   const [copied, setCopied] = useState(false);
+  const [copiedStep, setCopiedStep] = useState(false);
   const [redirectCountdown, setRedirectCountdown] = useState<number | null>(null);
 
   // Referências para controle de animação
@@ -202,43 +199,11 @@ export default function App() {
     // Rotação final para alinhar o cupom sob o ponteiro (que está no topo, 12 horas)
     // Rotação de 0 graus deixa o índice 0 sob o ponteiro.
     // Como a roleta gira em sentido horário, para alinhar o índice C ao topo, giramos (360 - C * 45) graus.
-    const baseSpins = 12; // 12 giros completos de alta velocidade
+    const baseSpins = 8; // 8 giros completos de alta velocidade
     const targetFinalAngle = baseSpins * 360 + (360 - C * 45);
 
-    /*
-    ========================================================================
-    9. ONDE É APLICADO O EFEITO DE QUASE CAIR NO PRODUTO
-       - Nós definimos um ângulo de "tease" (isca) que aponta para um produto próximo ao cupom sorteado.
-       - Nas fatias 0, 2, 4, o produto adjacente é P = C + 1. Tease = final - 45°
-       - Na fatia 6, o produto adjacente é P = 5. Tease = final + 45° (efeito de passar e recuar)
-       - Na fatia 7, o produto adjacente é P = 1. Tease = final - 90° (desacelera no Sofá, passa pelo Copa6Off e para no Prime3Off)
-    ========================================================================
-    */
-    let targetTeaseAngle = targetFinalAngle - 45;
-    if (C === 6) {
-      targetTeaseAngle = targetFinalAngle + 45; // Passa ligeiramente, para no produto e recua suavemente
-    } else if (C === 7) {
-      targetTeaseAngle = targetFinalAngle - 90; // Começa a quase parar no Sofá Clássico (1) e escorrega até o cupom (7)
-    }
-
-    const A5 = targetTeaseAngle - 540; // Ângulo no final do segundo 5 (ainda longe, mas pronto para desaceleração)
-
-    // Parâmetros matemáticos para garantir suavidade e continuidade de velocidades
-    // Segmento 2 (t entre 5000ms e 7000ms): de A5 a targetTeaseAngle
-    const v5 = (A5 * 1.8) / 5; // velocidade terminal do segmento 1 em graus/s
-    const c_seg2 = v5 * 2; // derivativa ponderada
-    const delta_seg2 = targetTeaseAngle - A5;
-    const a_seg2 = 20 + c_seg2 - 2 * delta_seg2;
-    const b_seg2 = delta_seg2 - c_seg2 - a_seg2;
-
-    // Segmento 3 (t entre 7000ms e 8500ms): de targetTeaseAngle a targetFinalAngle
-    const vT = 12; // Velocidade de rastreamento lento (creeping speed) em graus/s
-    const c_seg3 = vT * 1.5;
-    const delta_seg3 = targetFinalAngle - targetTeaseAngle;
-    const a_seg3 = c_seg3 - 2 * delta_seg3;
-    const b_seg3 = delta_seg3 - c_seg3 - a_seg3;
-
-    // Função de loop de animação baseada no tempo real para consistência
+    // Função de loop de animação baseada no tempo real para consistência e suavidade física impecável
+    const totalDuration = 7000; // 7 segundos de puro suspense com desaceleração contínua e natural
     const animate = (timestamp: number) => {
       if (!startTimestampRef.current) {
         startTimestampRef.current = timestamp;
@@ -246,49 +211,13 @@ export default function App() {
 
       const elapsed = timestamp - startTimestampRef.current;
 
-      if (elapsed < 5000) {
-        /*
-        ========================================================================
-        7. ONDE OCORRE O GIRO RÁPIDO DE 5 SEGUNDOS
-           - Ocorre entre 0 e 5000 milissegundos.
-           - Aplica uma curva de progressão exponencial crescente para gerar giros rápidos,
-             chegando a aproximadamente 4 giros completos por segundo no pico.
-        ========================================================================
-        */
-        const p = elapsed / 5000;
-        const currentAngle = A5 * Math.pow(p, 1.8);
+      if (elapsed < totalDuration) {
+        const p = elapsed / totalDuration;
+        // Quintic ease-out: starts fast, beautifully and continuously slows down to exact zero at stop
+        const ease = 1 - Math.pow(1 - p, 5);
+        const currentAngle = targetFinalAngle * ease;
         setRotation(currentAngle);
         animationFrameRef.current = requestAnimationFrame(animate);
-
-      } else if (elapsed < 7000) {
-        /*
-        ========================================================================
-        8. ONDE COMEÇA A DESACELERAÇÃO A PARTIR DO SEGUNDO 6
-           - Iniciado rigorosamente no segundo 5 (passando pelo segundo 6).
-           - O polinômio de terceiro grau desacelera a roleta de alta velocidade para uma velocidade quase estática
-             bem em cima da fatia do produto (ângulo tease) ao atingir o segundo 7.
-        ========================================================================
-        */
-        const u = (elapsed - 5000) / 2000; // Normalizado entre 0 e 1 (durante 2 segundos)
-        const currentAngle = a_seg2 * Math.pow(u, 3) + b_seg2 * Math.pow(u, 2) + c_seg2 * u + A5;
-        setRotation(currentAngle);
-        animationFrameRef.current = requestAnimationFrame(animate);
-
-      } else if (elapsed < 8500) {
-        /*
-        ========================================================================
-        10. ONDE A ROLETA PARA NO CUPOM AO LADO DO PRODUTO
-            - Ocorre entre os segundos 7 e 8.5.
-            - A velocidade reduz drasticamente a uma quase imobilidade no produto (gerando o suspense absoluto),
-              e então, com um último suspiro sutil, a roleta desliza suavemente para parar exatamente
-              sobre o cupom premiado vizinho, finalizando com velocidade zero perfeita em 8.5 segundos.
-        ========================================================================
-        */
-        const w = (elapsed - 7000) / 1500; // Normalizado entre 0 e 1 (durante 1.5 segundos)
-        const currentAngle = a_seg3 * Math.pow(w, 3) + b_seg3 * Math.pow(w, 2) + c_seg3 * w + targetTeaseAngle;
-        setRotation(currentAngle);
-        animationFrameRef.current = requestAnimationFrame(animate);
-
       } else {
         // Finalização da animação
         setRotation(targetFinalAngle);
@@ -308,7 +237,7 @@ export default function App() {
   ========================================================================
   11. ONDE ESTÁ A FUNÇÃO DE COPIAR CUPOM
       - Copia o cupom para a área de transferência usando API moderna ou fallback compatível.
-      - Ativa o temporizador regressivo de 5 segundos obrigatório após copiar.
+      - Ativa o temporizador regressivo de 6 segundos obrigatório após copiar.
   ========================================================================
   */
   const handleCopyCoupon = () => {
@@ -345,7 +274,8 @@ export default function App() {
     }
 
     setCopied(true);
-    setRedirectCountdown(5);
+    setCopiedStep(true);
+    setRedirectCountdown(6);
   };
 
   /*
@@ -471,10 +401,10 @@ export default function App() {
               <Gift className="w-3.5 h-3.5" /> ✨ Oportunidade Exclusiva Prime Home Decor
             </span>
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-semibold tracking-tight leading-tight text-white drop-shadow-sm">
-              Gire e Ganhe seu <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-gold-light via-brand-gold to-brand-caramel font-bold italic">Cupom Especial</span> com a chance de levar um Produto de Luxo!
+              Gire e Ganhe seu <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-gold-light via-brand-gold to-brand-caramel font-bold italic">Cupom de Desconto</span> para Peças Clássicas de Luxo!
             </h1>
             <p className="text-sm md:text-base text-gray-300 leading-relaxed max-w-md mx-auto lg:mx-0">
-              Cadastre-se abaixo para girar a roleta premium. Você garante um cupom de desconto real de até 8% OFF imediatamente, com a emocionante possibilidade de conquistar produtos requintados como o <strong>Par de Poltronas Clássicas</strong>, a <strong>Cômoda Marchetada</strong> ou o <strong>Aparelho de Jantar</strong>!
+              Cadastre-se abaixo para girar a roleta premium e garantir seu cupom exclusivo de até 8% OFF imediatamente. O empurrãozinho perfeito para você renovar seu lar com as poltronas, cômodas e aparelhos de jantar clássicos da Prime Home Decor!
             </p>
           </div>
 
@@ -635,7 +565,7 @@ export default function App() {
 
                 {/* Corpo Rotatório Interno */}
                 <div 
-                  className="relative w-[300px] h-[300px] xs:w-[340px] xs:h-[340px] sm:w-[400px] sm:h-[400px] md:w-[440px] md:h-[440px] rounded-full overflow-hidden bg-brand-navy select-none"
+                  className="relative w-[340px] h-[340px] xs:w-[390px] xs:h-[390px] sm:w-[460px] sm:h-[460px] md:w-[500px] md:h-[500px] lg:w-[540px] lg:h-[540px] rounded-full overflow-hidden bg-brand-navy select-none"
                   style={{
                     transform: `rotate(${rotation}deg)`,
                     transition: isSpinning ? 'none' : 'transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
@@ -654,18 +584,17 @@ export default function App() {
                       
                       return (
                         <path 
-                          key={idx} 
-                          d={pathStr} 
-                          fill={fillFill} 
+                           key={idx} 
+                           d={pathStr} 
+                           fill={fillFill} 
                         />
                       );
                     })}
                   </svg>
 
-                  {/* Elementos HTML absolutos rotacionados contendo o texto e fotos */}
+                  {/* Elementos HTML absolutos rotacionados contendo o texto dos cupons */}
                   <div className="absolute inset-0">
                     {visualItems.map((item, idx) => {
-                      const isProduct = item.type === 'product';
                       return (
                         <div 
                           key={idx}
@@ -674,40 +603,23 @@ export default function App() {
                             transform: `translateX(-50%) rotate(${idx * 45}deg)` 
                           }}
                         >
-                          {isProduct ? (
-                            /* Layout do produto: Imagem no topo da fatia + Nome textual separado abaixo */
-                            <div className="flex flex-col items-center pt-2 sm:pt-3 md:pt-4 w-full text-center px-1">
-                              <div className="w-8 h-8 xs:w-10 xs:h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 flex items-center justify-center">
-                                <img 
-                                  src={item.image} 
-                                  alt={item.name} 
-                                  className="w-full h-full object-contain rounded-md mix-blend-multiply" 
-                                  referrerPolicy="no-referrer"
-                                />
-                              </div>
-                              <span className="text-[9px] xs:text-[10px] sm:text-[11px] font-bold text-white mt-1 leading-tight tracking-tight drop-shadow-md">
-                                {item.name}
-                              </span>
-                            </div>
-                          ) : (
-                            /* Layout do Cupom: Escrito de forma legível em linha horizontal, realçando porcentagem */
-                            <div className="flex flex-col items-center pt-4 sm:pt-6 md:pt-8 w-full text-center px-1">
-                              <span className="text-[10px] xs:text-[11px] sm:text-xs font-extrabold text-brand-gold tracking-wider drop-shadow-md uppercase">
-                                {item.code}
-                              </span>
-                              <span className="text-[8px] xs:text-[9px] sm:text-[10px] font-semibold text-white/95 mt-1 uppercase tracking-widest bg-brand-caramel/30 px-1.5 py-0.5 rounded-full border border-brand-gold/15 whitespace-nowrap">
-                                {item.discount}
-                              </span>
-                            </div>
-                          )}
+                          {/* Layout do Cupom: Escrito de forma legível em linha horizontal, realçando porcentagem */}
+                          <div className="flex flex-col items-center pt-5 sm:pt-8 md:pt-11 lg:pt-12 w-full text-center px-1">
+                            <span className="text-[11px] xs:text-xs sm:text-sm font-extrabold text-brand-gold tracking-wider drop-shadow-md uppercase">
+                              {item.code}
+                            </span>
+                            <span className="text-[9px] xs:text-[10px] sm:text-[11px] font-semibold text-white/95 mt-1.5 uppercase tracking-widest bg-brand-caramel/30 px-2 py-0.5 rounded-full border border-brand-gold/15 whitespace-nowrap">
+                              {item.discount}
+                            </span>
+                          </div>
                         </div>
                       );
                     })}
                   </div>
 
                   {/* Centro Circular Limpo e Elegante com Logo de Letra */}
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 xs:w-16 xs:h-16 rounded-full bg-gradient-to-b from-brand-gold-light via-brand-caramel to-brand-gold-dark z-20 flex items-center justify-center shadow-lg border-2 border-brand-navy">
-                    <div className="w-10 h-10 xs:w-12 xs:h-12 rounded-full bg-brand-navy flex items-center justify-center border border-brand-gold/30 shadow-inner p-1.5">
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 xs:w-20 xs:h-20 rounded-full bg-gradient-to-b from-brand-gold-light via-brand-caramel to-brand-gold-dark z-20 flex items-center justify-center shadow-lg border-2 border-brand-navy">
+                    <div className="w-12 h-12 xs:w-16 xs:h-16 rounded-full bg-brand-navy flex items-center justify-center border border-brand-gold/30 shadow-inner p-2">
                       <img
                         src="https://images.tcdn.com.br/files/1200797/themes/132/img/settings/primelogo.png?d3f787757aa49795d1a68910f5385a84"
                         alt="Prime Logo"
@@ -738,85 +650,109 @@ export default function App() {
             /* 
             ========================================================================
             COPIAR CUPOM E REDIRECIONAMENTO (RESULTADO FINAL PÓS GIRO)
-               - A roleta desaparece e exibe o cupom em glória.
-               - Contém botões de cópia e timer de redirecionamento.
+               - Dividido em duas etapas distintas de interação para total fluidez
             ========================================================================
             */
-            <div className="w-full max-w-md bg-[#031323]/95 border-2 border-brand-gold/30 p-8 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.7)] text-center relative overflow-hidden animate-fadeIn space-y-6">
-              
-              {/* Confetes explodindo visualmente na tela de vitória */}
-              <ConfettiEffect />
-
-              <div className="space-y-2 relative z-10">
-                <div className="w-16 h-16 mx-auto bg-brand-gold/10 border border-brand-gold/40 rounded-full flex items-center justify-center text-brand-gold animate-bounce mb-2">
-                  <Gift className="w-8 h-8" />
-                </div>
-                <h3 className="text-sm font-semibold uppercase tracking-widest text-brand-gold">
-                  Sorteio Concluído!
-                </h3>
-                <h2 className="text-3xl font-serif font-bold text-white leading-tight">
-                  Parabéns!
-                </h2>
-                <p className="text-sm text-gray-300">
-                  Você ganhou um cupom de desconto exclusivo da Prime Home Decor.
-                </p>
-              </div>
-
-              {/* Destaque do Cupom Premiado */}
-              <div className="bg-[#051c31] border border-brand-gold/20 p-5 rounded-2xl relative overflow-hidden group hover:border-brand-gold/40 transition-all z-10">
-                <div className="absolute top-[-20px] left-[-20px] w-12 h-12 rounded-full bg-brand-navy" />
-                <div className="absolute top-[-20px] right-[-20px] w-12 h-12 rounded-full bg-brand-navy" />
-                <div className="absolute bottom-[-20px] left-[-20px] w-12 h-12 rounded-full bg-brand-navy" />
-                <div className="absolute bottom-[-20px] right-[-20px] w-12 h-12 rounded-full bg-brand-navy" />
+            !copiedStep ? (
+              /* ETAPA 1: Revelação do Cupom e Cópia */
+              <div className="w-full max-w-md bg-[#031323]/95 border-2 border-brand-gold/30 p-8 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.7)] text-center relative overflow-hidden animate-fadeIn space-y-6">
                 
-                <div className="space-y-1 relative z-10">
-                  <span className="text-[10px] uppercase font-bold tracking-widest text-gray-400">Código do Cupom</span>
-                  <div className="text-2xl font-mono font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-brand-gold-light to-brand-gold tracking-wider select-all">
-                    {winningCoupon?.code}
+                {/* Confetes explodindo visualmente na tela de vitória */}
+                <ConfettiEffect />
+
+                <div className="space-y-2 relative z-10">
+                  <div className="w-16 h-16 mx-auto bg-brand-gold/10 border border-brand-gold/40 rounded-full flex items-center justify-center text-brand-gold animate-bounce mb-2">
+                    <Gift className="w-8 h-8" />
                   </div>
-                  <div className="text-sm text-brand-gold font-bold mt-1">
-                    {winningCoupon?.discount} de Desconto Real
+                  <h3 className="text-sm font-semibold uppercase tracking-widest text-brand-gold">
+                    Sorteio Concluído!
+                  </h3>
+                  <h2 className="text-3xl font-serif font-bold text-white leading-tight">
+                    Parabéns!
+                  </h2>
+                  <p className="text-sm text-gray-300">
+                    Você ganhou um cupom de desconto exclusivo da Prime Home Decor.
+                  </p>
+                </div>
+
+                {/* Destaque do Cupom Premiado */}
+                <div className="bg-[#051c31] border border-brand-gold/20 p-5 rounded-2xl relative overflow-hidden group hover:border-brand-gold/40 transition-all z-10">
+                  <div className="absolute top-[-20px] left-[-20px] w-12 h-12 rounded-full bg-brand-navy" />
+                  <div className="absolute top-[-20px] right-[-20px] w-12 h-12 rounded-full bg-brand-navy" />
+                  <div className="absolute bottom-[-20px] left-[-20px] w-12 h-12 rounded-full bg-brand-navy" />
+                  <div className="absolute bottom-[-20px] right-[-20px] w-12 h-12 rounded-full bg-brand-navy" />
+                  
+                  <div className="space-y-1 relative z-10">
+                    <span className="text-[10px] uppercase font-bold tracking-widest text-gray-400">Código do Cupom</span>
+                    <div className="text-2xl font-mono font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-brand-gold-light to-brand-gold tracking-wider select-all">
+                      {winningCoupon?.code}
+                    </div>
+                    <div className="text-sm text-brand-gold font-bold mt-1">
+                      {winningCoupon?.discount} de Desconto Real
+                    </div>
                   </div>
                 </div>
+
+                {/* Botão de Copiar Cupom */}
+                <div className="space-y-4 relative z-10 pt-2">
+                  <button
+                    onClick={handleCopyCoupon}
+                    className="w-full bg-gradient-to-r from-brand-caramel via-brand-gold to-brand-gold-dark hover:brightness-110 text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 transform active:scale-98 flex items-center justify-center gap-2 shadow-[0_10px_20px_rgba(149,94,32,0.3)] cursor-pointer"
+                  >
+                    <Copy className="w-5 h-5" />
+                    Copiar Cupom
+                  </button>
+                </div>
+
+                <div className="text-[10px] text-gray-500 relative z-10">
+                  Copie o seu cupom acima para habilitar o link de acesso para a nossa loja.
+                </div>
+
               </div>
-
-              {/* Botão de Copiar Cupom */}
-              <div className="space-y-4 relative z-10 pt-2">
-                <button
-                  onClick={handleCopyCoupon}
-                  className="w-full bg-gradient-to-r from-brand-caramel via-brand-gold to-brand-gold-dark hover:brightness-110 text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 transform active:scale-98 flex items-center justify-center gap-2 shadow-[0_10px_20px_rgba(149,94,32,0.3)] cursor-pointer"
-                >
-                  {copied ? (
-                    <>
-                      <Check className="w-5 h-5 text-green-300" />
-                      Cupom Copiado!
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-5 h-5" />
-                      Copiar Cupom
-                    </>
-                  )}
-                </button>
-
-                {/* Temporizador de Redirecionamento de 5 Segundos */}
-                {redirectCountdown !== null && (
-                  <div className="p-3 bg-brand-navy/60 rounded-xl border border-brand-gold/10 animate-pulse text-xs text-brand-gold-light flex flex-col items-center justify-center gap-1.5">
-                    <span className="font-semibold text-gray-300">
-                      Copiado com sucesso! Redirecionando para a loja...
-                    </span>
-                    <span className="text-sm font-extrabold bg-brand-caramel/40 px-3 py-1 rounded-full text-white">
-                      Você será redirecionado em <span className="text-brand-gold">{redirectCountdown}s</span>...
-                    </span>
+            ) : (
+              /* ETAPA 2: Redirecionamento */
+              <div className="w-full max-w-md bg-[#031323]/95 border-2 border-brand-gold/30 p-8 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.7)] text-center relative overflow-hidden animate-fadeIn space-y-6">
+                
+                <div className="space-y-2 relative z-10">
+                  <div className="w-16 h-16 mx-auto bg-green-950/40 border border-green-500/40 rounded-full flex items-center justify-center text-green-400 mb-2 animate-pulse">
+                    <Check className="w-8 h-8" />
                   </div>
-                )}
-              </div>
+                  <h3 className="text-sm font-semibold uppercase tracking-widest text-green-400">
+                    Cupom Copiado com Sucesso!
+                  </h3>
+                  <h2 className="text-3xl font-serif font-bold text-white leading-tight">
+                    Tudo Pronto!
+                  </h2>
+                  <p className="text-sm text-gray-300">
+                    O código <strong className="text-brand-gold-light font-mono text-base">{winningCoupon?.code}</strong> foi copiado para a sua área de transferência. Use-o na finalização da sua compra!
+                  </p>
+                </div>
 
-              <div className="text-[10px] text-gray-500 relative z-10">
-                Caso o redirecionamento automático falhe, você pode acessar diretamente o site da loja em <a href="https://www.primehomedecor.com.br" className="text-brand-gold underline hover:text-white">primehomedecor.com.br</a>.
-              </div>
+                {/* Grande Botão de Redirecionamento Manual */}
+                <div className="space-y-4 relative z-10 pt-2">
+                  <a
+                    href="https://www.primehomedecor.com.br"
+                    className="w-full bg-gradient-to-r from-brand-caramel via-brand-gold to-brand-gold-dark hover:brightness-110 text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 transform active:scale-98 flex items-center justify-center gap-2 shadow-[0_10px_20px_rgba(149,94,32,0.3)] cursor-pointer"
+                  >
+                    Ir para a Loja Oficial
+                  </a>
 
-            </div>
+                  {/* Temporizador de Redirecionamento de 6 Segundos */}
+                  {redirectCountdown !== null && (
+                    <div className="p-3 bg-brand-navy/60 rounded-xl border border-brand-gold/10 animate-pulse text-xs text-brand-gold-light flex flex-col items-center justify-center gap-1.5">
+                      <span className="text-sm font-semibold text-gray-300">
+                        Redirecionando automaticamente em <span className="text-brand-gold font-extrabold text-base">{redirectCountdown}s</span>...
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="text-[10px] text-gray-500 relative z-10">
+                  Caso o redirecionamento automático falhe, você pode acessar diretamente o site da loja em <a href="https://www.primehomedecor.com.br" className="text-brand-gold underline hover:text-white">primehomedecor.com.br</a>.
+                </div>
+
+              </div>
+            )
           )}
 
         </div>
